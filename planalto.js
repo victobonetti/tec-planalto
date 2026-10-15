@@ -142,8 +142,54 @@
     }
   }
 
+  /* ---------------- ícones viram palavras ----------------
+     No modo Planalto não há ícones: cada botão que era só ícone ganha um rótulo (data-tecf-rotulo,
+     mostrado pelo CSS) e as ferramentas que não servem à leitura somem (data-tecf-ocultar). */
+  const ROTULOS = [
+    ["abrirComplemento('comentario')", "Comentário do professor"], ["abrirComplemento('teoria')", "Teoria"],
+    ["abrirComplemento('discussao')", "Fórum"], ["abrirComplemento('desempenho')", "Desempenho"],
+    ["abrirComplemento('detalhes')", "Informações"], ["exibirFavorita", "Favoritar"], ["exibirAnotacao", "Anotar"],
+    ["abrirQuestaoPorNumero", "Ir para…"], ["questaoAnterior", "Anterior"], ["questaoSeguinte", "Próxima"],
+    ["questaoAleatoria", "Aleatória"], ["questaoNaoResolvida", "Não resolvida"], ["questaoDoTopicoAnterior", "Tópico anterior"],
+    ["questaoDoTopicoSeguinte", "Tópico seguinte"], ["desfazerUltimaQuestao", "Desfazer"], ["questaoProximaFavorita", "Próxima favorita"],
+    ["questaoProximaAnotada", "Próxima anotada"], ["votarComentarioAprovar", "Gostei"], ["votarComentarioRejeitar", "Não gostei"],
+    ["fecharComplemento", "Fechar"],
+  ];
+  const OCULTAR = ["alternarExibirAssunto(false)", "alternarExibirConcurso(false)", "toggleModoLeitura", "mostrarDropdownExpandirQuestao",
+    "expandirTamanhoHorizontal", "reduzirTamanhoHorizontal", "voltarTamanhoHorizontalPadrao"];
+  const limparTitulo = (t) => t.replace(/\s*-\s*Atalho:.*$/i, "").replace(/\s*\((?:Tecla|Seta)[^)]*\)/i, "")
+    .replace(/\s+deste caderno\.?$/i, "").replace(/^menu opções$/i, "Mais opções").trim();
+  function rotular() {
+    for (const el of document.querySelectorAll("button, a, [ng-click]")) {
+      if (el.id === "tecf-botao" || el.closest("#tecf-pop, #tec-cookie-banner, .questao-enunciado-alternativas")) continue;
+      const ng = el.getAttribute("ng-click") || "", titulo = el.getAttribute("title") || el.getAttribute("uib-tooltip") || "";
+      if (OCULTAR.some((x) => ng.includes(x)) || /^Foto do usuário/i.test(titulo)) { el.setAttribute("data-tecf-ocultar", ""); continue; }
+      const ind = el.querySelector(".questao-complementos-menu-indicador");
+      const proprio = (el.textContent.replace(ind ? ind.textContent : "", "")).trim();
+      const mapa = ROTULOS.find(([k]) => ng.includes(k));
+      let r = null;
+      if (mapa && !proprio) r = mapa[1];
+      else if (!proprio && titulo) r = limparTitulo(titulo);
+      else if (!proprio && el.classList.contains("botao-fechar")) r = "Fechar";
+      if (r && el.getAttribute("data-tecf-rotulo") !== r) el.setAttribute("data-tecf-rotulo", r);
+    }
+  }
+
+  // Ícones vazios (glyphicon, font awesome, sprites "icone") somem; os que têm texto dentro, como o
+  // contador do fórum, ficam.
+  const ICONE = /(^|\s)(glyphicon|fa|fa-[\w-]+|icone[\w-]*|icon-[\w-]+)(\s|$)/;
+  function esconderIcones() {
+    for (const el of document.querySelectorAll("i, span, em, b")) {
+      if (el.hasAttribute("data-tecf-ocultar") || !ICONE.test(el.className || "")) continue;
+      if (el.textContent.trim() || el.hasAttribute("ng-click") || el.closest("#tecf-pop, #tec-cookie-banner")) continue;
+      el.setAttribute("data-tecf-ocultar", "");
+    }
+  }
+
   function varrer() {
     if (!document.body) return;
+    esconderIcones();
+    rotular();
     document.querySelectorAll(ALVOS).forEach((el) => { esconderVazios(el); if (LEI) linkar(el); });
   }
 
