@@ -1,0 +1,218 @@
+/* TEC Planalto: modo de leitura com a cara da Constituição no site do Planalto e referências
+   clicáveis aos artigos da CF e da Constituição de Santa Catarina.
+   - Liga e desliga: botão ¶ no canto, ícone da extensão ou Alt+P. A preferência fica em chrome.storage.
+   - "art. 167, VII", "arts. 5º, XI", "CE/SC, art. 85" viram link: o mouse mostra o texto vigente,
+     o clique fixa o quadro. Inciso e alínea vêm com o caput (ou o parágrafo) que lhes dá sentido.
+   Nada é enviado a lugar nenhum: o texto da lei vem do arquivo lei.json da própria extensão. */
+(() => {
+  "use strict";
+  const html = document.documentElement;
+  const CHAVE = "tecf";
+
+  /* ---------------- liga / desliga ---------------- */
+  let botao = null;
+  const aplicar = (on) => {
+    html.classList.toggle("tecf", on);
+    if (botao) {
+      botao.setAttribute("aria-pressed", String(on));
+      botao.title = on ? "Sair do modo Planalto (Alt+P)" : "Modo Planalto (Alt+P)";
+    }
+  };
+  const alternar = () => chrome.storage.local.get({ [CHAVE]: true }, (r) => chrome.storage.local.set({ [CHAVE]: !r[CHAVE] }));
+  chrome.storage.local.get({ [CHAVE]: true }, (r) => aplicar(r[CHAVE]));
+  chrome.storage.onChanged.addListener((m, area) => { if (area === "local" && CHAVE in m) aplicar(m[CHAVE].newValue); });
+  addEventListener("keydown", (e) => {
+    if (!e.altKey || e.ctrlKey || e.metaKey || e.code !== "KeyP") return;
+    if (e.target.closest && e.target.closest("input, textarea, [contenteditable='true']")) return;
+    e.preventDefault(); alternar();
+  }, true);
+
+  /* ---------------- referências ---------------- */
+  // Onde procurar: enunciado, alternativas, comentário do professor, fórum e teoria.
+  const ALVOS = [
+    ".questao-enunciado-texto", ".questao-enunciado-alternativa-texto",
+    ".questao-complementos-comentario-conteudo-texto", ".discussao-comentario-post-texto", ".conteudo-aba-teoria",
+  ].join(",");
+  // Mesmo padrão da Campanha Constitucional do portal, aceitando também "artigo 5º".
+  const REF_RE = /(CE\/SC,\s*)?\b([Aa])(?:rts?\.|rtigos?)\s*(\d+(?:-[A-Z])?)(?![\d-])(?!º?\s*(?:a|e)\s*\d)º?((?:,\s*(?:§§?\s*\d+º?(?:\s*e\s*\d+º?)?|parágrafo único|caput|[IVXLC]+(?:-[A-Z])?(?![a-zà-ú])|[a-z](?=[).;:,]|$)))*)(\s+da\s+(?:CE\/SC|CF|Constituição Federal|Constituição da República))?/g;
+  // Depois da referência: "da Lei 11.417", "do ADCT", "do CTN"... não é a CF.
+  const OUTRA_DEPOIS = /^,?\s*(?:d[aoe]s?|desta|deste|dessa|desse|nesta|neste|na|no)\s+(?:Lei|LC\b|L\.|Decreto|CTN|C[óo]digo|ADCT|Ato das Disposi|Regimento|Estatuto|Resolu|Emenda|EC\b|Instru|Portaria|CLT|CPC|CPP|CP\b|CC\b|LRF|LINDB|Conven|Carta|Constitui[çc][ãa]o (?:Estadual|do Estado|Paulista|Mineira|Fluminense|Ga[úu]cha|de \d))/i;
+  const CE_DEPOIS = /^,?\s*da\s+(?:Constitui[çc][ãa]o (?:do Estado de Santa Catarina|Catarinense|de Santa Catarina)|CE\/SC|CESC)\b/i;
+  // Antes da referência: "Lei 8.112, art. 5º", "CTN, art. 142", "ADCT, art. 113".
+  // Sensível a maiúsculas: "nos termos da lei, art. 5º" não é outra lei.
+  const OUTRA_ANTES = /(?:\bLei\b|\bLC\b|Decreto|CTN|ADCT|C[óo]digo|CLT|Regimento|Estatuto|Resolu[çc][ãa]o|Emenda Constitucional)[^.;:()\n]{0,25}$/;
+  const AUTONOMOS = new Set(["cf:5", "cf:37"]); // incisos que são frases completas: dispensam o caput
+
+  let LEI = null;
+  fetch(chrome.runtime.getURL("lei.json")).then((r) => r.json()).then((d) => { LEI = d; varrer(); }).catch(() => {});
+
+  const NIVEL = (l) => /^(§|Parágrafo único)/.test(l) ? 1 : /^[IVXLC]+(?:-[A-Z])?\s*[-–]/.test(l) ? 2 : /^[a-z]\)/.test(l) ? 3 : 0;
+
+  function parseRef(m, depois) {
+    const src = m[1] || /CE\/SC/.test(m[5] || "") || CE_DEPOIS.test(depois) ? "ce" : "cf";
+    const partes = (m[4] || "").split(",").map((x) => x.trim()).filter(Boolean)
+      .map((x) => x.replace(/^§§/, "§").replace(/\s*e\s*\d+º?$/, ""));
+    return { src, art: m[3], partes };
+  }
+
+  /* Trecho do dispositivo: contexto (caput, parágrafo, inciso da alínea) + o dispositivo e seus filhos. */
+  function trecho(src, art, partes) {
+    const L = LEI && LEI[src] && LEI[src][art];
+    if (!L) return null;
+    let alvo = 0, ini = 1, fim = L.length;
+    const fimBloco = (j, nv) => { let k = j + 1; while (k < L.length && NIVEL(L[k]) > nv) k++; return k; };
+    const primeiroPar = L.findIndex((l, k) => k > 0 && NIVEL(l) === 1);
+    if (primeiroPar > 0) fim = primeiroPar;
+    const cadeia = [];
+    for (const p of partes) {
+      let re, nv;
+      if (/^§/.test(p)) { re = new RegExp("^§\\s*" + p.match(/\d+/)[0] + "(?:º|°|\\.|\\s|-)"); nv = 1; ini = 1; fim = L.length; }
+      else if (/^par/i.test(p)) { re = /^Parágrafo único/; nv = 1; ini = 1; fim = L.length; }
+      else if (p === "caput") { alvo = 0; continue; }
+      else if (/^[IVXLC]/.test(p)) { re = new RegExp("^" + p + "\\s*[-–]"); nv = 2; }
+      else { re = new RegExp("^" + p + "\\)"); nv = 3; }
+      let j = -1;
+      for (let k = ini; k < fim; k++) if (re.test(L[k])) { j = k; break; }
+      if (j < 0) return null;
+      cadeia.push(j); alvo = j; ini = j + 1; fim = fimBloco(j, nv);
+    }
+    const ctx = [];
+    if (alvo > 0 && NIVEL(L[alvo]) >= 2) {
+      const dentroDePar = cadeia.some((j) => NIVEL(L[j]) === 1);
+      if (!dentroDePar && !AUTONOMOS.has(src + ":" + art)) ctx.push(L[0]);
+      for (const j of cadeia.slice(0, -1)) ctx.push(L[j]);
+    }
+    const nv = NIVEL(L[alvo]), corpo = [L[alvo]];
+    const ate = alvo === 0 ? (primeiroPar > 0 ? primeiroPar : L.length) : fimBloco(alvo, nv);
+    for (let k = alvo + 1; k < ate && corpo.length < 14; k++) corpo.push(L[k]);
+    if (ate - alvo > 14) corpo.push("…");
+    return { ctx, corpo };
+  }
+
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function linkar(raiz) {
+    const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => {
+        const p = n.parentElement;
+        if (!p || p.closest(".tecf-ref, #tecf-pop, script, style, textarea, input, a, button")) return NodeFilter.FILTER_REJECT;
+        REF_RE.lastIndex = 0;
+        return REF_RE.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      },
+    });
+    const nos = [];
+    while (w.nextNode()) nos.push(w.currentNode);
+    for (const n of nos) {
+      const t = n.nodeValue, f = document.createDocumentFragment();
+      let i = 0, m;
+      REF_RE.lastIndex = 0;
+      while ((m = REF_RE.exec(t))) {
+        const antes = t.slice(Math.max(0, m.index - 40), m.index), depois = t.slice(m.index + m[0].length, m.index + m[0].length + 60);
+        const explicitaCF = /CF|Federal|República/.test(m[5] || "");
+        if (!explicitaCF && !m[1]) {
+          if (OUTRA_DEPOIS.test(depois) && !CE_DEPOIS.test(depois)) continue;
+          if (OUTRA_ANTES.test(antes)) continue;
+          // "“Art. 1º As concessionárias..." é cabeçalho de lei citada no enunciado, não a CF.
+          if (m[2] === "A" && !m[4] && /["“'‘]\s*$/.test(antes)) continue;
+        }
+        const r = parseRef(m, depois);
+        if (!LEI[r.src] || !LEI[r.src][r.art]) continue;
+        f.append(t.slice(i, m.index));
+        const sp = document.createElement("span");
+        sp.className = "tecf-ref"; sp.tabIndex = 0; sp.textContent = m[0];
+        sp.dataset.ref = JSON.stringify(r);
+        sp.setAttribute("role", "button");
+        sp.setAttribute("aria-label", "Ver o texto de " + m[0].trim());
+        f.append(sp);
+        i = m.index + m[0].length;
+      }
+      if (i) { f.append(t.slice(i)); n.replaceWith(f); }
+    }
+  }
+
+  // O site separa os parágrafos com nós de texto só de &nbsp;, que viram linhas em branco.
+  // Embrulhados em .tecf-vazio, somem no modo Planalto e voltam ao desligar.
+  const BLOCO = /^(P|DIV|UL|OL|LI|TABLE|BLOCKQUOTE|H[1-6]|PRE|FIGURE)$/;
+  function esconderVazios(raiz) {
+    for (const n of [...raiz.childNodes]) {
+      if (n.nodeType !== 3 || n.nodeValue.trim() || !n.nodeValue.includes("\u00a0")) continue;
+      const a = n.previousElementSibling, d = n.nextElementSibling;
+      if (!(a && BLOCO.test(a.tagName)) && !(d && BLOCO.test(d.tagName))) continue;
+      const sp = document.createElement("span"); sp.className = "tecf-vazio"; n.replaceWith(sp); sp.append(n);
+    }
+  }
+
+  function varrer() {
+    if (!document.body) return;
+    document.querySelectorAll(ALVOS).forEach((el) => { esconderVazios(el); if (LEI) linkar(el); });
+  }
+
+  /* ---------------- quadro com o texto ---------------- */
+  let pop = null, fixo = null, timer = null;
+  function quadro() {
+    if (pop) return pop;
+    pop = document.createElement("div");
+    pop.id = "tecf-pop"; pop.setAttribute("role", "dialog"); pop.hidden = true;
+    document.body.appendChild(pop);
+    pop.addEventListener("mouseenter", () => clearTimeout(timer));
+    pop.addEventListener("mouseleave", () => { timer = setTimeout(() => fechar(false), 200); });
+    return pop;
+  }
+  function mostrar(el, fixar) {
+    const r = JSON.parse(el.dataset.ref), tx = trecho(r.src, r.art, r.partes), q = quadro();
+    const nome = (r.src === "ce" ? "CE/SC, art. " : "CF, art. ") + r.art + (r.partes.length ? ", " + r.partes.join(", ") : "");
+    const url = r.src === "ce"
+      ? "https://leis.alesc.sc.gov.br/html/constituicao_estadual_1989.html"
+      : "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm#art" + r.art.toLowerCase().replace("-", "");
+    const linha = (l, cls) => `<p class="tecf-l n${NIVEL(l)}${cls ? " " + cls : ""}">${esc(l)}</p>`;
+    q.innerHTML = `<div class="tecf-h"><b>${esc(nome)}</b><button class="tecf-x" aria-label="Fechar">×</button></div>` +
+      (tx
+        ? tx.ctx.map((l) => linha(l, "tecf-ctx")).join("") + (tx.ctx.length ? '<p class="tecf-l tecf-sep">…</p>' : "") + tx.corpo.map((l) => linha(l)).join("")
+        : '<p class="tecf-l">Trecho não encontrado neste artigo.</p>') +
+      `<a class="tecf-a" href="${url}" target="_blank" rel="noopener">Ver na fonte oficial ↗</a>`;
+    q.hidden = false; fixo = fixar ? el : null;
+    const b = el.getBoundingClientRect(), w = Math.min(520, innerWidth - 24);
+    q.style.width = w + "px";
+    q.style.left = Math.min(Math.max(12, b.left), innerWidth - w - 12) + "px";
+    q.style.top = b.bottom + 8 + "px";
+    const h = q.offsetHeight;
+    if (b.bottom + 8 + h > innerHeight - 8 && b.top - h - 8 > 8) q.style.top = b.top - h - 8 + "px";
+    q.querySelector(".tecf-x").onclick = (e) => { e.stopPropagation(); fechar(true); };
+  }
+  const fechar = (forca) => { if (pop && (forca || !fixo)) { pop.hidden = true; if (forca) fixo = null; } };
+
+  // Captura: o clique na referência não pode marcar a alternativa nem acionar o site.
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest && e.target.closest(".tecf-ref");
+    if (el) { e.preventDefault(); e.stopPropagation(); mostrar(el, true); return; }
+    if (fixo && !(e.target.closest && e.target.closest("#tecf-pop"))) fechar(true);
+  }, true);
+  document.addEventListener("mouseover", (e) => {
+    const el = e.target.closest && e.target.closest(".tecf-ref");
+    if (!el || fixo) return;
+    clearTimeout(timer); timer = setTimeout(() => mostrar(el, false), 120);
+  });
+  document.addEventListener("mouseout", (e) => {
+    if (e.target.closest && e.target.closest(".tecf-ref")) { clearTimeout(timer); timer = setTimeout(() => fechar(false), 200); }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") fechar(true);
+    if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("tecf-ref")) { e.preventDefault(); mostrar(e.target, true); }
+  });
+  addEventListener("scroll", () => { if (!fixo) fechar(false); }, { passive: true });
+
+  /* ---------------- início ---------------- */
+  function iniciar() {
+    botao = document.createElement("button");
+    botao.id = "tecf-botao"; botao.type = "button"; botao.textContent = "¶";
+    botao.onclick = alternar;
+    document.body.appendChild(botao);
+    chrome.storage.local.get({ [CHAVE]: true }, (r) => aplicar(r[CHAVE]));
+    // O TEC troca a questão sem recarregar a página: novas questões e comentários são varridos aqui.
+    let pend = null;
+    new MutationObserver(() => { clearTimeout(pend); pend = setTimeout(varrer, 150); })
+      .observe(document.body, { childList: true, subtree: true });
+    varrer();
+  }
+  if (document.body) iniciar(); else addEventListener("DOMContentLoaded", iniciar, { once: true });
+})();

@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "TEC Planalto",
+  "version": "1.0.0",
+  "description": "Questões do TEC Concursos com a cara da Constituição no site do Planalto, e artigos citados com o texto vigente ao passar o mouse.",
+  "icons": { "16": "icones/16.png", "48": "icones/48.png", "128": "icones/128.png" },
+  "action": { "default_title": "TEC Planalto: ligar ou desligar (Alt+P)" },
+  "background": { "service_worker": "fundo.js" },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.tecconcursos.com.br/*"],
+      "css": ["planalto.css"],
+      "js": ["planalto.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["lei.json"], "matches": ["https://www.tecconcursos.com.br/*"] }
+  ]
+}

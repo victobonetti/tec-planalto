@@ -1,0 +1,109 @@
+/* TEC Planalto. Tipografia copiada da Constituição no site do Planalto: Arial 13px, preto no branco,
+   texto justificado com recuo de 38px, links azuis (#0000FF) sublinhados, sem verde.
+   Tudo fica sob html.tecf (modo ligado). As referências (.tecf-ref) e o quadro valem nos dois modos. */
+
+/* ---------- referências e quadro (sempre) ---------- */
+.tecf-ref { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
+.tecf-ref:hover, .tecf-ref:focus-visible { background: #ffff99; outline: none; }
+#tecf-pop {
+  position: fixed; z-index: 100000; max-height: min(60vh, 440px); overflow: auto; box-sizing: border-box;
+  background: #fff; color: #000; border: 1px solid #000; padding: 10px 14px 12px;
+  font: 13px/1.45 Arial, "Liberation Sans", Helvetica, sans-serif; text-align: left; box-shadow: 0 4px 18px rgba(0,0,0,.18);
+}
+#tecf-pop[hidden] { display: none; }
+#tecf-pop .tecf-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+#tecf-pop .tecf-h b { text-transform: uppercase; font-weight: 700; }
+#tecf-pop .tecf-x { border: 0; background: none; font-size: 18px; line-height: 1; cursor: pointer; color: #000; padding: 0 2px; }
+#tecf-pop .tecf-l { margin: 0 0 5px; text-align: justify; text-indent: 38px; }
+#tecf-pop .tecf-ctx { color: #444; }
+#tecf-pop .tecf-sep { text-indent: 38px; color: #444; margin-bottom: 2px; }
+#tecf-pop .tecf-a { display: inline-block; margin-top: 4px; color: #0000ff; text-decoration: underline; }
+
+/* ---------- botão ¶ ---------- */
+#tecf-botao {
+  position: fixed; z-index: 100001; right: 12px; bottom: 12px; width: 28px; height: 28px; padding: 0;
+  border: 1px solid #c0c0c0; border-radius: 4px; background: #fff; color: #555;
+  font: 700 15px/1 Arial, sans-serif; cursor: pointer; opacity: .55;
+}
+#tecf-botao:hover, #tecf-botao:focus-visible { opacity: 1; color: #000; }
+#tecf-botao[aria-pressed="true"] { color: #0000ff; }
+
+/* ---------- modo Planalto ---------- */
+html.tecf, html.tecf body, html.tecf #body, html.tecf .offcanvas-canvas, html.tecf .secao, html.tecf .container-secao,
+html.tecf .conteudo-secao, html.tecf #caderno { background: #fff !important; }
+html.tecf #header { display: none !important; }
+html.tecf .questao-cabecalho-logotipo { display: none !important; }
+
+/* Tipografia: tudo dentro da questão em Arial 13px, menos ícones (fontes de ícone). */
+html.tecf .questao,
+html.tecf .questao :where(*:not([class*="glyphicon"]):not([class*="fa-"]):not(.fa):not([class*="icone"]):not(svg):not(svg *)) {
+  font-family: Arial, "Liberation Sans", Helvetica, sans-serif !important;
+  font-size: 13px !important; line-height: 1.45 !important; letter-spacing: normal !important;
+}
+html.tecf .questao, html.tecf :is(.questao-enunciado-texto, .questao-enunciado-alternativa-texto, .questao-complementos-comentario-conteudo-texto, .discussao-comentario-post-texto, .conteudo-aba-teoria) { color: #000 !important; }
+html.tecf :is(.caderno-subtitulo, .caderno-subtitulo-secao) { background: #fff !important; }
+html.tecf .questao :where(p, li, span, div, label, strong, em, b, i, h1, h2, h3, td, th) { color: inherit; }
+html.tecf .questao a, html.tecf .caderno-subtitulo a, html.tecf .links-caderno a { color: #0000ff !important; text-decoration: underline !important; }
+
+/* Cartões, sombras e fundos somem nos blocos de texto (os gráficos de desempenho ficam como estão). */
+html.tecf :is(.questao, .questao-cabecalho, .questao-enunciado, .questao-enunciado-alternativas, .questao-enunciado-alternativas > li,
+  .questao-enunciado-alternativa, .questao-complementos, .questao-complementos-cabecalho, .questao-complementos-comentario-pai,
+  .discussao-comentarios > li, .discussao-comentario-corpo, .discussao-comentario-post, .discussao-titulo, .questao-rodape) {
+  background: transparent !important; box-shadow: none !important; border-radius: 0 !important;
+}
+html.tecf .questao-cabecalho { border-bottom: 1px solid #c0c0c0 !important; }
+
+/* Enunciado e comentários: parágrafos justificados, recuo de 38px, como a lei. */
+html.tecf :is(.questao-enunciado-texto, .questao-complementos-comentario-conteudo-texto, .discussao-comentario-post-texto, .conteudo-aba-teoria) p {
+  text-indent: 38px; margin: 0 0 8px !important;
+}
+/* O site grava "text-align: left" em cada parágrafo; centralizado e à direita ficam como estão. */
+html.tecf :is(.questao-enunciado-texto, .questao-complementos-comentario-conteudo-texto, .discussao-comentario-post-texto, .conteudo-aba-teoria) p:not([style*="center"]):not([style*="right"]) {
+  text-align: justify !important;
+}
+html.tecf .tecf-vazio { display: none !important; }
+html.tecf :is(.questao-complementos-comentario-conteudo-texto, .discussao-comentario-post-texto, .conteudo-aba-teoria) :where(*) { color: inherit !important; }
+html.tecf .questao-enunciado-concurso, html.tecf .questao-enunciado-concurso * { font-weight: 700 !important; }
+/* Espaçadores vazios que o site insere entre parágrafos. */
+html.tecf .questao-enunciado :is(br.elemento-vazio, p.elemento-vazio) { display: none !important; }
+
+/* Alternativas: linhas finas, letra como "A)", sem fundo colorido. */
+html.tecf .questao-enunciado-alternativas > li { border: 0 !important; border-bottom: 1px solid #e2e2e2 !important; }
+html.tecf .questao-enunciado-alternativa { padding: 6px 0 !important; margin: 0 !important; }
+html.tecf .questao-enunciado-alternativa-texto { text-align: justify; }
+html.tecf .questao-enunciado-alternativa-opcao {
+  background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important;
+  width: auto !important; min-width: 2.2em; height: auto !important; color: #000 !important;
+}
+html.tecf .questao-enunciado-alternativa-campo { width: 3.4em !important; min-width: 3.4em !important; max-width: 3.4em !important; flex: 0 0 3.4em !important; white-space: nowrap; text-align: left !important; }
+html.tecf .questao-enunciado-alternativa-opcao label {
+  display: inline-flex !important; width: auto !important; height: auto !important; padding: 0 !important; margin: 0 !important;
+  border: 0 !important; font-weight: 700 !important; color: #000 !important; background: none !important; white-space: nowrap;
+}
+html.tecf .questao-enunciado-alternativa-opcao label::after { content: ")"; }
+html.tecf .questao-enunciado-alternativa:hover .questao-enunciado-alternativa-texto { text-decoration: underline; text-decoration-color: #c0c0c0; }
+/* Sua marcação: letra sublinhada. */
+html.tecf .questao-alternativa-selecionada label { text-decoration: underline !important; text-underline-offset: 3px; }
+/* Correção: certa em negrito com ✓ (sem verde), errada em vermelho. */
+html.tecf .questao-enunciado-alternativas > li.correcao .questao-enunciado-alternativa-texto { font-weight: 700 !important; }
+html.tecf .questao-enunciado-alternativas > li.correcao .questao-enunciado-alternativa-opcao label::before { content: "✓"; margin-right: 3px; }
+html.tecf .questao-enunciado-alternativas > li.erro,
+html.tecf .questao-enunciado-alternativas > li.erro :where(*) { color: #f00 !important; }
+html.tecf .questao-enunciado-alternativas > li.erro .questao-enunciado-alternativa-texto { text-decoration: line-through; }
+
+/* Mensagem de resultado: texto puro. */
+html.tecf .questao-enunciado-mensagem-resolucao .glyphicon { display: none !important; }
+html.tecf .questao-enunciado-resolucao-errou .enfase { color: #f00 !important; font-weight: 700 !important; }
+html.tecf .questao-enunciado-resolucao-acertou .enfase { color: #000 !important; font-weight: 700 !important; }
+html.tecf .questao-enunciado-resolucao-acertou .enfase::before { content: "✓ "; }
+
+/* Botões e ícones do site: sem cor, para não disputar com o texto. */
+html.tecf :is(.questao-cabecalho-botoes, .questao-navegacao, .questao-enunciado-concurso .questao-compartilhar) :is(img, i, span[class*="icone"], .glyphicon) {
+  filter: grayscale(1) !important;
+}
+html.tecf .questao-navegacao-botao { box-shadow: none !important; border-radius: 0 !important; border-color: #c0c0c0 !important; background-color: #fff !important; }
+html.tecf .questao-complementos-menu-indicador { background: #000 !important; color: #fff !important; filter: none !important; }
+
+/* Fórum: votos e nomes em preto, sem enfeite. */
+html.tecf .discussao-comentarios > li { border-bottom: 1px solid #e2e2e2 !important; }
+html.tecf :is(.discussao-comentario-nota, .discussao-comentario-post-cabecalho) :where(*) { color: #000 !important; }
