@@ -1,6 +1,6 @@
 # TEC Planalto
 
-Extensão do Chrome que dá às questões do [TEC Concursos](https://www.tecconcursos.com.br) a cara da Constituição no site do Planalto, como o modo hiperfoco do portal, e mostra o texto vigente de cada artigo citado.
+Extensão do Chrome que dá às questões do [TEC Concursos](https://www.tecconcursos.com.br) a cara da Constituição no site do Planalto, como o modo hiperfoco do [Portal do Aprendizado](https://github.com/victobonetti/portal-do-aprendizado), e mostra o texto vigente de cada artigo citado.
 
 ## O que faz
 
@@ -25,9 +25,9 @@ Nada sai do seu navegador: a extensão não faz requisições a servidores, não
 
 ## Instalar
 
-1. Baixe esta pasta (`extensao-tec/`) para o seu computador. Por exemplo, pelo GitHub, em *Code → Download ZIP*, e descompacte.
+1. Baixe este repositório para o seu computador. Por exemplo, pelo GitHub, em *Code → Download ZIP*, e descompacte.
 2. No Chrome, abra `chrome://extensions` e ligue o **Modo do desenvolvedor**, no canto superior direito.
-3. Clique em **Carregar sem compactação** e escolha a pasta `extensao-tec`.
+3. Clique em **Carregar sem compactação** e escolha a pasta descompactada (a que tem o `manifest.json`).
 4. Abra uma questão no TEC. Para atualizar a extensão depois, baixe a pasta de novo e clique em ↻ no cartão dela em `chrome://extensions`.
 
 ## Arquivos
