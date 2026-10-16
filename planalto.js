@@ -11,8 +11,46 @@
 
   /* ---------------- liga / desliga ---------------- */
   let botao = null;
+  /* ---------------- aba do navegador ----------------
+     Ligado: título "Constituição" (como a página da CF no Planalto) e ícone §. Desligado: volta o do site.
+     O TEC troca o título a cada questão; o observador reaplica o nosso. */
+  const TITULO = "Constituição";
+  const FAVICON = "data:image/svg+xml," + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="#fff"/>' +
+    '<text x="16" y="25" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" text-anchor="middle" fill="#000">§</text></svg>');
+  let ligado = false, tituloOriginal = null, obsTitulo = null;
+  function aba(on) {
+    const head = document.head;
+    if (!head) return;
+    if (on) {
+      if (tituloOriginal === null) tituloOriginal = document.title;
+      if (document.title !== TITULO) document.title = TITULO;
+      // Ícones do site ficam inertes (rel trocado) para o navegador usar o nosso.
+      for (const l of head.querySelectorAll('link[rel~="icon"]:not(#tecf-icone)')) { l.dataset.tecfRel = l.rel; l.rel = "tecf-icone-original"; }
+      if (!document.getElementById("tecf-icone")) {
+        const l = document.createElement("link"); l.id = "tecf-icone"; l.rel = "icon"; l.type = "image/svg+xml"; l.href = FAVICON; head.appendChild(l);
+      }
+      if (!obsTitulo) {
+        obsTitulo = new MutationObserver(() => {
+          if (!ligado) return;
+          if (document.title !== TITULO) { tituloOriginal = document.title; document.title = TITULO; }
+          // O site pode recolocar os próprios ícones ao navegar.
+          for (const l of head.querySelectorAll('link[rel~="icon"]:not(#tecf-icone)')) { l.dataset.tecfRel = l.rel; l.rel = "tecf-icone-original"; }
+        });
+        obsTitulo.observe(head, { childList: true, subtree: true, characterData: true });
+      }
+    } else {
+      if (tituloOriginal !== null && document.title === TITULO) document.title = tituloOriginal;
+      tituloOriginal = null;
+      document.getElementById("tecf-icone")?.remove();
+      for (const l of head.querySelectorAll('link[rel="tecf-icone-original"]')) { l.rel = l.dataset.tecfRel || "icon"; delete l.dataset.tecfRel; }
+    }
+  }
+
   const aplicar = (on) => {
+    ligado = on;
     html.classList.toggle("tecf", on);
+    aba(on);
     if (botao) {
       botao.setAttribute("aria-pressed", String(on));
       botao.title = on ? "Sair do modo Planalto (Alt+P)" : "Modo Planalto (Alt+P)";
