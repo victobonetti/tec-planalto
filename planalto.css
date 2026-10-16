@@ -1,7 +1,7 @@
 /* TEC Planalto. A página do TEC passa a parecer a Constituição no site do Planalto:
    Arial 13px, preto no branco, texto justificado com recuo de 38px, links azuis (#0000FF) sublinhados.
-   Sem ícones, sem imagens, sem linhas, sem fundos. Só as cores que a página da CF usa: preto, branco,
-   azul dos links e do título, grená do "Texto compilado" e vermelho (aqui, para o erro).
+   Sem ícones, sem imagens, sem linhas, sem fundos. Só as cores que a página da CF usa: preto, branco
+   e o azul dos links e do título. A correção é sutil: a certa em negrito, a sua errada em itálico.
    Tudo fica sob html.tecf (modo ligado). As referências (.tecf-ref) e o quadro valem nos dois modos. */
 
 /* ---------- referências e quadro (sempre) ---------- */
@@ -84,8 +84,6 @@ html.tecf .questao-cabecalho-informacoes-numero > span:not(.questao-cabecalho-in
   color: #0000ff !important; font-weight: 700 !important; text-transform: uppercase !important;
 }
 html.tecf .questao-cabecalho-botoes { margin-top: 6px !important; }
-html.tecf .questao-enunciado-concurso { text-align: center !important; margin: 10px 0 14px !important; }
-html.tecf body .questao-enunciado-concurso, html.tecf body .questao-enunciado-concurso * { color: #800000 !important; font-weight: 400 !important; text-decoration: none !important; }
 
 /* Enunciado e comentários: parágrafos justificados com recuo, como a lei. */
 html.tecf :is(.questao-enunciado-texto, .questao-complementos-comentario-conteudo-texto, .discussao-comentario-post-texto, .conteudo-aba-teoria) p {
@@ -112,22 +110,29 @@ html.tecf .questao-enunciado-alternativa-opcao label {
   font-weight: 700 !important; white-space: nowrap; cursor: pointer;
 }
 html.tecf .questao-enunciado-alternativa-opcao label::after { content: ")" !important; }
-html.tecf .questao-enunciado-alternativa:hover .questao-enunciado-alternativa-texto { text-decoration: underline; }
+/* Sem as letras: cada alternativa é um parágrafo com recuo. A marcada fica sublinhada; o mouse, pontilhado. */
+html.tecf .questao-enunciado-alternativa-campo { display: none !important; }
+html.tecf .questao-enunciado-alternativa-texto { text-indent: 38px; }
+html.tecf .questao-enunciado-alternativa:hover .questao-enunciado-alternativa-texto { text-decoration: underline dotted; text-underline-offset: 3px; }
+/* Só antes de responder; depois, valem o negrito e o itálico. */
+html.tecf .questao-enunciado-alternativas:not(:has(> li.correcao)) > li:has(.questao-alternativa-selecionada) .questao-enunciado-alternativa-texto { text-decoration: underline solid !important; text-underline-offset: 3px; }
 /* Sua marcação: letra sublinhada. */
 html.tecf .questao-alternativa-selecionada label { text-decoration: underline !important; text-underline-offset: 3px; }
-/* Correção: certa em negrito com ✓, errada (a sua) em vermelho riscado. */
+/* Correção: a certa em negrito. */
 html.tecf .questao-enunciado-alternativas > li.correcao .questao-enunciado-alternativa-texto,
 html.tecf .questao-enunciado-alternativas > li.correcao .questao-enunciado-alternativa-texto * { font-weight: 700 !important; }
-html.tecf .questao-enunciado-alternativas > li.correcao .questao-enunciado-alternativa-opcao label::before { content: "✓" !important; margin-right: 3px; }
-html.tecf body .questao-enunciado-alternativas > li.erro,
-html.tecf body .questao-enunciado-alternativas > li.erro * { color: #ff0000 !important; }
-html.tecf .questao-enunciado-alternativas > li.erro .questao-enunciado-alternativa-texto { text-decoration: line-through; }
+/* Correção sutil: a certa em negrito, a sua (errada) em itálico. Sem cor, sem risco, sem sinal. */
+html.tecf .questao-enunciado-alternativas > li.erro .questao-enunciado-alternativa-texto,
+html.tecf .questao-enunciado-alternativas > li.erro .questao-enunciado-alternativa-texto * { font-style: italic !important; }
 
 /* Resultado: texto puro. */
-/* "Você errou!" vira "Errou."; "Você acertou!", "✓ Acertou."; "Resolver Questão", "Resolver". */
-html.tecf body :is(.questao-enunciado-resolucao-errou, .questao-enunciado-resolucao-acertou) .enfase { font-size: 0 !important; font-weight: 700 !important; }
-html.tecf body .questao-enunciado-resolucao-errou .enfase::before { content: "Errou." !important; font-size: 13px !important; color: #ff0000 !important; }
-html.tecf body .questao-enunciado-resolucao-acertou .enfase::before { content: "✓ Acertou." !important; font-size: 13px !important; }
+/* "Você errou!" vira "Errou."; "Você acertou!", "Acertou."; "Resolver Questão", "Resolver". */
+html.tecf body :is(.questao-enunciado-resolucao-errou, .questao-enunciado-resolucao-acertou) .enfase { font-size: 0 !important; font-weight: 400 !important; }
+html.tecf body .questao-enunciado-resolucao-errou .enfase::before { content: "Errou." !important; font-size: 13px !important; }
+html.tecf body .questao-enunciado-resolucao-acertou .enfase::before { content: "Acertou." !important; font-size: 13px !important; }
+/* Sem letras, "Gabarito: A." perde o sentido, e "Ver resolução" repete o G: fica só "Errou." ou "Acertou.". */
+html.tecf .questao-enunciado-mensagem-resolucao > span { font-size: 0 !important; }
+html.tecf .questao-enunciado-mensagem-resolucao > span :is(strong, a, span:not(.enfase)) { display: none !important; }
 html.tecf body .botao-resolver { font-size: 0 !important; }
 html.tecf body .botao-resolver::before { content: "Resolver" !important; font-size: 13px !important; display: inline !important; }
 html.tecf .questao-navegacao { margin-top: 10px !important; text-align: left !important; }
@@ -149,13 +154,24 @@ html.tecf :is(.caderno-subtitulo, .container-abas, .link-compartilhar,
   .questao-complementos-comentario-coluna-esquerda, .questao-complementos-comentario-foto, .questao-complementos-comentario-conteudo-data,
   .discussao-titulo, .discussao-comentario-nota, .post-cabecalho-detalhes, .post-cabecalho-perfil-data, .post-cabecalho-perfil-bloqueio,
   .votos, .discussao-comentario-botoes, .discussao-comentario-oculto, .discussao-comentario-silenciado,
-  .id-questao, .esconder-alternativa, .questao-navegacao-botao-ir-para-cinza, .questao-navegacao-botao-anterior-cinza, .questao-navegacao-botao-proxima-cinza) {
+  .questao-enunciado-concurso, .box-warning, .id-questao, .esconder-alternativa, .questao-navegacao-botao-ir-para-cinza, .questao-navegacao-botao-anterior-cinza, .questao-navegacao-botao-proxima-cinza) {
   display: none !important;
 }
 /* Dos botões da questão fica só o fórum; o comentário do professor abre por "Ver resolução", depois de responder. */
-html.tecf .questao-cabecalho-botoes > :not(button[ng-click*="discussao"]) { display: none !important; }
+html.tecf .questao-cabecalho-botoes > :not(button[ng-click*="discussao"]):not(button[ng-click*="'comentario'"]) { display: none !important; }
+/* Fórum vira só o número de posts, "(8)"; o comentário do professor vira "G", depois do número. */
+html.tecf .questao-cabecalho-botoes { display: flex !important; justify-content: center !important; gap: 10px; }
+html.tecf .questao-cabecalho-botoes > button[ng-click*="discussao"] { order: 1; margin: 0 !important; }
+html.tecf .questao-cabecalho-botoes > button[ng-click*="'comentario'"] { order: 2; margin: 0 !important; }
 /* Da navegação ficam "Anterior" e "Próxima". */
-html.tecf .questao-navegacao > .questao-navegacao-botao:not(.questao-navegacao-botao-anterior):not(.questao-navegacao-botao-proxima) { display: none !important; }
+html.tecf .questao-navegacao > .questao-navegacao-botao:not(.questao-navegacao-botao-anterior):not(.questao-navegacao-botao-proxima):not(.questao-navegacao-botao-mudar-topico-esquerda):not(.questao-navegacao-botao-mudar-topico-direita) { display: none !important; }
+/* << tópico anterior · < anterior · > próxima · >> tópico seguinte */
+html.tecf .questao-navegacao { display: flex !important; justify-content: center !important; gap: 18px; }
+html.tecf .questao-navegacao > .questao-navegacao-botao { margin: 0 !important; text-decoration: none !important; }
+html.tecf .questao-navegacao-botao-mudar-topico-esquerda { order: 1; }
+html.tecf .questao-navegacao-botao-anterior { order: 2; }
+html.tecf .questao-navegacao-botao-proxima { order: 3; }
+html.tecf .questao-navegacao-botao-mudar-topico-direita { order: 4; }
 html.tecf .questao-navegacao { text-align: center !important; }
 
 /* "590 de 1281" no lugar de "QUESTÃO 590 DE 1281 ( Exibir )". */
@@ -190,7 +206,6 @@ html.tecf .discussao-comentario-post-cabecalho { margin-bottom: 4px !important; 
 html.tecf :is(.questao-complementos-comentario-conteudo-texto, .discussao-comentario-post-texto, .conteudo-aba-teoria) :is(ul, ol) { margin: 0 0 8px !important; }
 html.tecf :is(.questao-rg-area, .questao-rg-area-coluna-1) { display: block !important; width: auto !important; float: none !important; text-align: center !important; }
 html.tecf .questao-rg-area-coluna-2 { display: none !important; }
-html.tecf .questao-enunciado-concurso { margin: 0 0 12px !important; }
 html.tecf .questao-enunciado-texto { margin-bottom: 14px !important; }
 html.tecf .questao-enunciado-alternativas { margin-bottom: 14px !important; }
 html.tecf .questao-enunciado-resolucao > div:not(.questao-navegacao) { margin-bottom: 10px !important; }

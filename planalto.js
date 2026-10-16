@@ -146,12 +146,12 @@
      No modo Planalto não há ícones: cada botão que era só ícone ganha um rótulo (data-tecf-rotulo,
      mostrado pelo CSS) e as ferramentas que não servem à leitura somem (data-tecf-ocultar). */
   const ROTULOS = [
-    ["abrirComplemento('comentario')", "Comentário do professor"], ["abrirComplemento('teoria')", "Teoria"],
-    ["abrirComplemento('discussao')", "Fórum"], ["abrirComplemento('desempenho')", "Desempenho"],
+    ["abrirComplemento('comentario')", "G"], ["abrirComplemento('teoria')", "Teoria"],
+    ["abrirComplemento('discussao')", ""], ["abrirComplemento('desempenho')", "Desempenho"],
     ["abrirComplemento('detalhes')", "Informações"], ["exibirFavorita", "Favoritar"], ["exibirAnotacao", "Anotar"],
-    ["abrirQuestaoPorNumero", "Ir para…"], ["questaoAnterior", "Anterior"], ["questaoSeguinte", "Próxima"],
-    ["questaoAleatoria", "Aleatória"], ["questaoNaoResolvida", "Não resolvida"], ["questaoDoTopicoAnterior", "Tópico anterior"],
-    ["questaoDoTopicoSeguinte", "Tópico seguinte"], ["desfazerUltimaQuestao", "Desfazer"], ["questaoProximaFavorita", "Próxima favorita"],
+    ["abrirQuestaoPorNumero", "Ir para…"], ["questaoAnterior", "<"], ["questaoSeguinte", ">"],
+    ["questaoAleatoria", "Aleatória"], ["questaoNaoResolvida", "Não resolvida"], ["questaoDoTopicoAnterior", "<<"],
+    ["questaoDoTopicoSeguinte", ">>"], ["desfazerUltimaQuestao", "Desfazer"], ["questaoProximaFavorita", "Próxima favorita"],
     ["questaoProximaAnotada", "Próxima anotada"], ["votarComentarioAprovar", "Gostei"], ["votarComentarioRejeitar", "Não gostei"],
     ["fecharComplemento", "Fechar"],
   ];
@@ -168,10 +168,11 @@
       const proprio = (el.textContent.replace(ind ? ind.textContent : "", "")).trim();
       const mapa = ROTULOS.find(([k]) => ng.includes(k));
       let r = null;
-      if (mapa && !proprio) r = mapa[1];
+      if (mapa && !proprio) r = mapa[1] || (ng.includes("discussao") && !ind ? "(0)" : null);
       else if (!proprio && titulo) r = limparTitulo(titulo);
       else if (!proprio && el.classList.contains("botao-fechar")) r = "Fechar";
       if (r && el.getAttribute("data-tecf-rotulo") !== r) el.setAttribute("data-tecf-rotulo", r);
+      else if (!r && mapa && el.hasAttribute("data-tecf-rotulo")) el.removeAttribute("data-tecf-rotulo");
     }
   }
 
