@@ -207,15 +207,12 @@
   function mostrar(el, fixar) {
     const r = JSON.parse(el.dataset.ref), tx = trecho(r.src, r.art, r.partes), q = quadro();
     const nome = (r.src === "ce" ? "CE/SC, art. " : "CF, art. ") + r.art + (r.partes.length ? ", " + r.partes.join(", ") : "");
-    const url = r.src === "ce"
-      ? "https://leis.alesc.sc.gov.br/html/constituicao_estadual_1989.html"
-      : "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm#art" + r.art.toLowerCase().replace("-", "");
     const linha = (l, cls) => `<p class="tecf-l n${NIVEL(l)}${cls ? " " + cls : ""}">${esc(l)}</p>`;
     q.innerHTML = `<div class="tecf-h"><b>${esc(nome)}</b><button class="tecf-x" aria-label="Fechar">×</button></div>` +
       (tx
         ? tx.ctx.map((l) => linha(l, "tecf-ctx")).join("") + (tx.ctx.length ? '<p class="tecf-l tecf-sep">…</p>' : "") + tx.corpo.map((l) => linha(l)).join("")
         : '<p class="tecf-l">Trecho não encontrado neste artigo.</p>') +
-      `<a class="tecf-a" href="${url}" target="_blank" rel="noopener">Ver na fonte oficial ↗</a>`;
+      "";
     q.hidden = false; fixo = fixar ? el : null;
     const b = el.getBoundingClientRect(), w = Math.min(520, innerWidth - 24);
     q.style.width = w + "px";

@@ -4,13 +4,15 @@ Extensão do Chrome que dá às questões do [TEC Concursos](https://www.tecconc
 
 ## O que faz
 
-- **Modo Planalto:** a página fica irreconhecível como TEC e parece a Constituição no site do Planalto.
-  - Arial 13px, preto no branco, parágrafos justificados com recuo; alternativas como incisos ("A)", "B)").
-  - A alternativa certa fica em negrito com ✓; a sua, se errada, em vermelho riscado.
-  - Sem ícones, imagens, gráficos, linhas, sombras nem fundos. Some a barra do site e o rodapé.
-  - Só as cores da página da CF: preto, branco, azul dos links e do título, grená e vermelho. O número da questão aparece centralizado em azul, como "CONSTITUIÇÃO DA REPÚBLICA…", e a banca e o concurso em grená, como "Texto compilado".
-  - Os botões que eram ícones viram links de texto, tirados do próprio `title` do site: Anterior, Próxima, Aleatória, Não resolvida, Comentário do professor, Teoria, Fórum (8), Favoritar, Anotar, Desempenho, Gostei, Não gostei. Tudo continua funcionando; as ferramentas de zoom e de largura somem.
-- **Referências clicáveis:** "art. 167, VII", "arts. 5º, XI", "artigo 24, V", "Art. 25, § 2º", "CE/SC, art. 85" no enunciado, nas alternativas, no comentário do professor, no fórum e na teoria. Passar o mouse mostra o texto; clicar fixa o quadro (Esc fecha).
+- **Modo Planalto:** a página fica irreconhecível como TEC e parece a Constituição no site do Planalto. Minimalismo absoluto: fica só a questão.
+  - No topo, "590 de 1281" em azul e o assunto como título de seção, em caixa alta ("UNIÃO: BENS E COMPETÊNCIAS…"); embaixo, só o link do fórum.
+  - A banca e o concurso em grená, como o "Texto compilado" da CF; depois o enunciado (justificado, com recuo) e as alternativas como incisos ("A)", "B)").
+  - Antes de responder: "Resolver". Depois: a certa em negrito com ✓, a sua (se errada) em vermelho riscado e "Errou. Gabarito: A. Ver resolução".
+  - Navegação: "Anterior" e "Próxima". Os outros atalhos do TEC (N, L, Z, X, setas) continuam funcionando pelo teclado.
+  - Fórum: o nome do autor em negrito e o texto, sem votos, pontos, datas nem ordenação.
+  - Somem: barra do site, caminho, cronômetro, abas do caderno, "Questão", "( Exibir )", matéria, número da questão no TEC, botões de teoria, comentário, favoritar, anotar e desempenho, rodapé, ícones, imagens, gráficos, linhas, sombras e fundos. Para usá-los, desligue o modo (¶ ou Alt+P).
+  - Só as cores da página da CF: preto, branco, azul dos links e do título, grená e vermelho.
+- **Referências clicáveis:** "art. 167, VII", "arts. 5º, XI", "artigo 24, V", "Art. 25, § 2º", "CE/SC, art. 85" no enunciado, nas alternativas, no comentário do professor, no fórum e na teoria. Passar o mouse mostra o texto num quadro sóbrio (só borda e texto); clicar fixa o quadro (Esc fecha).
   - Inciso e alínea vêm com o caput, o parágrafo ou o inciso que lhes dá sentido. Exemplo: "Art. 22. Compete privativamente à União legislar sobre: … VII - política de crédito…".
   - Não viram link: artigos de outras leis ("art. 7º da Lei 11.417", "CTN, art. 142", "do ADCT") e o cabeçalho de lei citada no enunciado ("“Art. 1º As concessionárias…").
   - Clicar numa referência dentro de uma alternativa não marca a alternativa.

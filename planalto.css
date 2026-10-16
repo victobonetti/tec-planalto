@@ -10,7 +10,7 @@
 #tecf-pop {
   position: fixed; z-index: 100000; max-height: min(60vh, 440px); overflow: auto; box-sizing: border-box;
   background: #fff; color: #000; border: 1px solid #000; padding: 10px 14px 12px;
-  font: 13px/1.45 Arial, "Liberation Sans", Helvetica, sans-serif; text-align: left; box-shadow: 0 4px 18px rgba(0,0,0,.18);
+  font: 13px/1.45 Arial, "Liberation Sans", Helvetica, sans-serif; text-align: left;
 }
 #tecf-pop[hidden] { display: none; }
 #tecf-pop .tecf-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
@@ -18,7 +18,6 @@
 #tecf-pop .tecf-x { border: 0; background: none; font-size: 18px; line-height: 1; cursor: pointer; color: #000; padding: 0 2px; }
 #tecf-pop .tecf-l { margin: 0 0 5px; text-align: justify; text-indent: 38px; }
 #tecf-pop .tecf-sep { text-indent: 38px; margin-bottom: 2px; }
-#tecf-pop .tecf-a { display: inline-block; margin-top: 4px; color: #0000ff; text-decoration: underline; }
 
 /* ---------- botão ¶ ---------- */
 #tecf-botao {
@@ -125,9 +124,12 @@ html.tecf body .questao-enunciado-alternativas > li.erro * { color: #ff0000 !imp
 html.tecf .questao-enunciado-alternativas > li.erro .questao-enunciado-alternativa-texto { text-decoration: line-through; }
 
 /* Resultado: texto puro. */
-html.tecf body .questao-enunciado-resolucao-errou .enfase { color: #ff0000 !important; font-weight: 700 !important; }
-html.tecf .questao-enunciado-resolucao-acertou .enfase { font-weight: 700 !important; }
-html.tecf .questao-enunciado-resolucao-acertou .enfase::before { content: "✓ " !important; }
+/* "Você errou!" vira "Errou."; "Você acertou!", "✓ Acertou."; "Resolver Questão", "Resolver". */
+html.tecf body :is(.questao-enunciado-resolucao-errou, .questao-enunciado-resolucao-acertou) .enfase { font-size: 0 !important; font-weight: 700 !important; }
+html.tecf body .questao-enunciado-resolucao-errou .enfase::before { content: "Errou." !important; font-size: 13px !important; color: #ff0000 !important; }
+html.tecf body .questao-enunciado-resolucao-acertou .enfase::before { content: "✓ Acertou." !important; font-size: 13px !important; }
+html.tecf body .botao-resolver { font-size: 0 !important; }
+html.tecf body .botao-resolver::before { content: "Resolver" !important; font-size: 13px !important; display: inline !important; }
 html.tecf .questao-navegacao { margin-top: 10px !important; text-align: left !important; }
 
 /* Fórum: o voto vira "Gostei · Não gostei", o placar fica em texto. */
@@ -136,3 +138,62 @@ html.tecf .discussao-comentario-nota { white-space: nowrap !important; min-width
 /* Sem os ícones e imagens que lhe davam largura, o item do fórum encolhia: ocupa a linha toda. */
 html.tecf .questao-complementos-comentario-pai { width: 100% !important; max-width: none !important; }
 html.tecf .questao-complementos-comentario-pai > * { flex: 1 1 100% !important; min-width: 0 !important; max-width: 100% !important; }
+
+/* =================== minimalismo =================== */
+/* Só a questão: sem caminho, cronômetro, abas, "Questão", "( Exibir )", matéria, número da questão no TEC,
+   cabeçalhos dos painéis, votos, pontos, datas, ordenação e a navegação duplicada. As ferramentas que
+   somem continuam acessíveis desligando o modo (¶ ou Alt+P) e pelos atalhos de teclado do TEC. */
+html.tecf :is(.caderno-subtitulo, .container-abas, .link-compartilhar,
+  .questao-cabecalho-informacoes-numero > .hidden-xs, .questao-cabecalho-informacoes-resolucao-exibir, .questao-cabecalho-informacoes-materia,
+  .questao-complementos-cabecalho-coluna-1, .questao-complementos-rodape,
+  .questao-complementos-comentario-coluna-esquerda, .questao-complementos-comentario-foto, .questao-complementos-comentario-conteudo-data,
+  .discussao-titulo, .discussao-comentario-nota, .post-cabecalho-detalhes, .post-cabecalho-perfil-data, .post-cabecalho-perfil-bloqueio,
+  .votos, .discussao-comentario-botoes, .discussao-comentario-oculto, .discussao-comentario-silenciado,
+  .id-questao, .esconder-alternativa, .questao-navegacao-botao-ir-para-cinza, .questao-navegacao-botao-anterior-cinza, .questao-navegacao-botao-proxima-cinza) {
+  display: none !important;
+}
+/* Dos botões da questão fica só o fórum; o comentário do professor abre por "Ver resolução", depois de responder. */
+html.tecf .questao-cabecalho-botoes > :not(button[ng-click*="discussao"]) { display: none !important; }
+/* Da navegação ficam "Anterior" e "Próxima". */
+html.tecf .questao-navegacao > .questao-navegacao-botao:not(.questao-navegacao-botao-anterior):not(.questao-navegacao-botao-proxima) { display: none !important; }
+html.tecf .questao-navegacao { text-align: center !important; }
+
+/* "590 de 1281" no lugar de "QUESTÃO 590 DE 1281 ( Exibir )". */
+html.tecf .questao-cabecalho-informacoes-numero > span:not(.questao-cabecalho-informacoes-resolucao-exibir) { text-transform: none !important; }
+/* O assunto vira o título da seção, como "DA UNIÃO" na CF: sem o rótulo "Assunto:", centralizado, em caixa alta. */
+html.tecf .questao-cabecalho-informacoes-assunto { font-size: 0 !important; margin-top: 2px !important; }
+html.tecf body .questao-cabecalho-informacoes-assunto :is(a, a *, span) {
+  font-size: 13px !important; color: #000 !important; text-decoration: none !important; font-weight: 700 !important; text-transform: uppercase !important;
+}
+/* Fechar o painel: um link só, em minúsculas. */
+html.tecf .botao-fechar-complemento span { text-transform: lowercase !important; }
+html.tecf .questao-complementos-cabecalho { text-align: right !important; }
+/* Fórum: o nome do autor em negrito, como um título de parágrafo, e o texto. */
+html.tecf body .post-cabecalho-perfil-info a { color: #000 !important; text-decoration: none !important; font-weight: 700 !important; }
+html.tecf .discussao-comentario-post-cabecalho { display: block !important; margin: 0 0 2px !important; }
+
+/* Espaçamento: zera margens, recuos verticais e alturas fixas do site (feitos para ícones e gráficos)
+   e define só o espaço da leitura, como na página da lei. */
+html.tecf body :where(.questao, .caderno-conteudo, #caderno, .secao, .container-secao, .conteudo-secao) :where(div, section, article, header, nav, ul, ol, li, h1, h2, h3, h4, span, label) {
+  margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;
+  min-height: 0 !important;
+}
+html.tecf body .questao :where(div, section, article) { height: auto !important; }
+html.tecf .questao-cabecalho { margin-bottom: 14px !important; }
+html.tecf .questao-cabecalho-informacoes-assunto, html.tecf .questao-cabecalho-informacoes-assunto * { text-align: center !important; float: none !important; }
+html.tecf .questao-cabecalho-informacoes-assunto { display: block !important; margin: 2px 0 !important; }
+html.tecf .questao-complementos { margin-bottom: 20px !important; }
+html.tecf .questao-complementos-cabecalho { display: flex !important; justify-content: flex-end !important; margin-bottom: 6px !important; }
+html.tecf .questao-complementos-cabecalho-coluna-2 { margin-left: auto !important; }
+html.tecf .discussao-comentarios > li { margin-bottom: 18px !important; }
+html.tecf .discussao-comentario-post-cabecalho { margin-bottom: 4px !important; }
+html.tecf :is(.questao-complementos-comentario-conteudo-texto, .discussao-comentario-post-texto, .conteudo-aba-teoria) :is(ul, ol) { margin: 0 0 8px !important; }
+html.tecf :is(.questao-rg-area, .questao-rg-area-coluna-1) { display: block !important; width: auto !important; float: none !important; text-align: center !important; }
+html.tecf .questao-rg-area-coluna-2 { display: none !important; }
+html.tecf .questao-enunciado-concurso { margin: 0 0 12px !important; }
+html.tecf .questao-enunciado-texto { margin-bottom: 14px !important; }
+html.tecf .questao-enunciado-alternativas { margin-bottom: 14px !important; }
+html.tecf .questao-enunciado-resolucao > div:not(.questao-navegacao) { margin-bottom: 10px !important; }
+/* "Fórum (8)" junto, sublinhado inteiro. */
+html.tecf button[ng-click*="discussao"] :is(i, .questao-complementos-menu-indicador) { text-decoration: underline !important; margin: 0 !important; }
+html.tecf button[ng-click*="discussao"] .questao-complementos-menu-indicador { margin-left: .25em !important; }
