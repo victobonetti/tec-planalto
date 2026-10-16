@@ -5,7 +5,8 @@ Extensão do Chrome que dá às questões do [TEC Concursos](https://www.tecconc
 ## O que faz
 
 - **Modo Planalto:** a página fica irreconhecível como TEC e parece a Constituição no site do Planalto. Minimalismo absoluto: fica só a questão.
-  - No topo, "590 de 1281" em azul e o assunto como título de seção, em caixa alta ("UNIÃO: BENS E COMPETÊNCIAS…"). Embaixo, "(8) G": o número de posts do fórum, que abre o fórum, e G, que abre o gabarito comentado do professor.
+  - No topo, "590 de 1281" em azul e o assunto como título de seção, em caixa alta ("UNIÃO: BENS E COMPETÊNCIAS…"). Embaixo, "(8) G %": o número de posts do fórum, que abre o fórum; G, que abre o gabarito comentado do professor; e %, que mostra as estatísticas da questão.
+  - O % usa o painel de desempenho do TEC sem mostrá-lo: aparece "acertos 36% · erros 64%" sob o cabeçalho e, no fim de cada alternativa, quanto ela foi marcada, como "(36%)". Outro clique no % some com os números. O TEC lembra a escolha, então os números seguem aparecendo nas próximas questões até você fechar.
   - O enunciado (justificado, com recuo) e as alternativas como parágrafos, sem as letras. A que você marcou fica sublinhada.
   - Antes de responder: "Resolver". Depois, uma marca sutil: a certa em **negrito**, a sua (se errada) em *itálico*, e a linha "Errou." ou "Acertou.".
   - Navegação: `<< < > >>` (tópico anterior, anterior, próxima, tópico seguinte). Os outros atalhos do TEC continuam valendo pelo teclado.

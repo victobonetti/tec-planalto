@@ -51,7 +51,7 @@
     ligado = on;
     html.classList.toggle("tecf", on);
     aba(on);
-    if (document.body) semDicas();
+    if (document.body) { semDicas(); estatisticas(); }
     if (botao) {
       botao.setAttribute("aria-pressed", String(on));
       botao.setAttribute("aria-label", on ? "Sair do modo Planalto (Alt+P)" : "Modo Planalto (Alt+P)");
@@ -186,7 +186,7 @@
      mostrado pelo CSS) e as ferramentas que não servem à leitura somem (data-tecf-ocultar). */
   const ROTULOS = [
     ["abrirComplemento('comentario')", "G"], ["abrirComplemento('teoria')", "Teoria"],
-    ["abrirComplemento('discussao')", ""], ["abrirComplemento('desempenho')", "Desempenho"],
+    ["abrirComplemento('discussao')", ""], ["abrirComplemento('desempenho')", "%"],
     ["abrirComplemento('detalhes')", "Informações"], ["exibirFavorita", "Favoritar"], ["exibirAnotacao", "Anotar"],
     ["abrirQuestaoPorNumero", "Ir para…"], ["questaoAnterior", "<"], ["questaoSeguinte", ">"],
     ["questaoAleatoria", "Aleatória"], ["questaoNaoResolvida", "Não resolvida"], ["questaoDoTopicoAnterior", "<<"],
@@ -232,9 +232,53 @@
     else for (const el of document.body.querySelectorAll("[data-tecf-titulo]")) { el.title = el.dataset.tecfTitulo; delete el.dataset.tecfTitulo; }
   }
 
+  /* ---------------- % : estatísticas em uma linha ----------------
+     O "%" abre o painel de desempenho do próprio TEC, que fica escondido; os números vão para o texto:
+     "(36%)" no fim de cada alternativa (quantos a marcaram) e "acertos 36% · erros 64%" sob o cabeçalho.
+     Outro clique no "%" fecha o painel e os números somem. */
+  const pct = (t) => { const n = parseFloat(String(t).replace(/\./g, "").replace(",", ".")); return isNaN(n) ? null : Math.round(n) + "%"; };
+  function legenda(painel) {
+    return [...painel.querySelectorAll(".legenda-titulo")].map((el) => {
+      const m = el.textContent.replace(/\s+/g, " ").trim().match(/^(.+?):\s*([\d.,]+)\s*%?$/);
+      return m ? { rotulo: m[1].trim(), valor: pct(m[2]) } : null;
+    }).filter(Boolean);
+  }
+  const porTitulo = (re) => [...document.querySelectorAll(".painel-desempenho")].find((p) => re.test((p.querySelector("h2") || {}).textContent || ""));
+  function trocarTexto(el, t) { if (el.textContent !== t) el.textContent = t; }
+  function estatisticas() {
+    const geral = porTitulo(/Desempenho Geral/i), alts = porTitulo(/Alternativas/i);
+    if (!ligado || !geral) { document.querySelectorAll(".tecf-pct, #tecf-taxa").forEach((e) => e.remove()); return; }
+    // taxa geral
+    const g = legenda(geral), ac = g.find((x) => /^Acertos$/i.test(x.rotulo)), er = g.find((x) => /^Erros$/i.test(x.rotulo));
+    const cab = document.querySelector(".questao-cabecalho");
+    if (cab && ac && er) {
+      let taxa = document.getElementById("tecf-taxa");
+      if (!taxa) { taxa = document.createElement("div"); taxa.id = "tecf-taxa"; cab.appendChild(taxa); }
+      trocarTexto(taxa, "acertos " + ac.valor + " · erros " + er.valor);
+    }
+    // quanto cada alternativa foi marcada, na ordem das alternativas (A–E ou CERTO/ERRADO)
+    const v = alts ? legenda(alts).filter((x) => /^([A-J]\)|CERTO|ERRADO)$/i.test(x.rotulo)).map((x) => x.valor) : [];
+    document.querySelectorAll(".questao-enunciado-alternativas > li").forEach((li, i) => {
+      const txt = li.querySelector(".questao-enunciado-alternativa-texto");
+      if (!txt) return;
+      let sp = txt.querySelector(":scope > .tecf-pct");
+      if (!v[i]) { if (sp) sp.remove(); return; }
+      if (!sp) { sp = document.createElement("span"); sp.className = "tecf-pct"; txt.appendChild(sp); }
+      trocarTexto(sp, " (" + v[i] + ")");
+    });
+  }
+  // Com o painel aberto, um clique no "%" fecha (em vez de reabrir).
+  document.addEventListener("click", (e) => {
+    const b = ligado && e.target.closest && e.target.closest("button[ng-click*=\"abrirComplemento('desempenho')\"]");
+    if (!b || !porTitulo(/Desempenho Geral/i)) return;
+    const fechar = document.querySelector(".botao-fechar-complemento");
+    if (fechar) { e.preventDefault(); e.stopPropagation(); fechar.click(); }
+  }, true);
+
   function varrer() {
     if (!document.body) return;
     semDicas();
+    estatisticas();
     esconderIcones();
     rotular();
     document.querySelectorAll(ALVOS).forEach((el) => { esconderVazios(el); if (LEI) linkar(el); });

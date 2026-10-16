@@ -158,11 +158,16 @@ html.tecf :is(.caderno-subtitulo, .container-abas, .link-compartilhar,
   display: none !important;
 }
 /* Dos botões da questão fica só o fórum; o comentário do professor abre por "Ver resolução", depois de responder. */
-html.tecf .questao-cabecalho-botoes > :not(button[ng-click*="discussao"]):not(button[ng-click*="'comentario'"]) { display: none !important; }
+html.tecf .questao-cabecalho-botoes > :not(button[ng-click*="discussao"]):not(button[ng-click*="'comentario'"]):not(button[ng-click*="'desempenho'"]) { display: none !important; }
 /* Fórum vira só o número de posts, "(8)"; o comentário do professor vira "G", depois do número. */
 html.tecf .questao-cabecalho-botoes { display: flex !important; justify-content: center !important; gap: 10px; }
 html.tecf .questao-cabecalho-botoes > button[ng-click*="discussao"] { order: 1; margin: 0 !important; }
 html.tecf .questao-cabecalho-botoes > button[ng-click*="'comentario'"] { order: 2; margin: 0 !important; }
+html.tecf .questao-cabecalho-botoes > button[ng-click*="'desempenho'"] { order: 3; margin: 0 !important; }
+/* % : o painel de desempenho do TEC fica escondido; os números aparecem no texto (planalto.js). */
+html.tecf .questao-complementos:has(.painel-desempenho) { display: none !important; }
+html.tecf #tecf-taxa { text-align: center !important; margin-top: 4px !important; }
+html.tecf body .questao-enunciado-alternativas > li .questao-enunciado-alternativa-texto .tecf-pct { font-weight: 400 !important; font-style: normal !important; text-decoration: none !important; white-space: nowrap; }
 /* Da navegação ficam "Anterior" e "Próxima". */
 html.tecf .questao-navegacao > .questao-navegacao-botao:not(.questao-navegacao-botao-anterior):not(.questao-navegacao-botao-proxima):not(.questao-navegacao-botao-mudar-topico-esquerda):not(.questao-navegacao-botao-mudar-topico-direita) { display: none !important; }
 /* << tópico anterior · < anterior · > próxima · >> tópico seguinte */
