@@ -6,6 +6,8 @@ Extensão do Chrome para quem resolve questões no [TEC Concursos](https://www.t
 
 E mais: todo artigo citado ("art. 22, VII", "CE/SC, art. 85") vira um link. Passe o mouse e leia o texto vigente na hora, sem abrir outra aba.
 
+<img width="1400" height="715" alt="image" src="https://github.com/user-attachments/assets/9dbced74-0dbe-43b0-a400-8dfb925b70cd" />
+
 ## Instalação
 
 A extensão não está na Chrome Web Store. A instalação é manual, leva um minuto e só precisa ser feita uma vez.
