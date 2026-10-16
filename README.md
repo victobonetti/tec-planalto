@@ -12,6 +12,7 @@ Extensão do Chrome que dá às questões do [TEC Concursos](https://www.tecconc
   - Fórum: o nome do autor em negrito e o texto, sem votos, pontos, datas nem ordenação.
   - Somem: barra do site, caminho, cronômetro, abas do caderno, "Questão", "( Exibir )", matéria, banca e concurso, número da questão no TEC, avisos (como "gabarito preliminar"), botões de teoria, favoritar, anotar e desempenho, letras das alternativas, rodapé, ícones, imagens, gráficos, linhas, sombras e fundos. Para usá-los, desligue o modo (¶ ou Alt+P).
   - Só preto, branco e o azul dos links e do título, como na página da CF.
+  - Nada reage ao mouse: sem sublinhados, destaques nem dicas (os `title` do site saem enquanto o modo está ligado). A avaliação do comentário do professor ("Classifique este comentário") some.
   - Na aba do navegador: título "Constituição", como o da página da CF, e ícone §. Ao desligar, voltam o título e o ícone do site.
 - **Referências clicáveis:** "art. 167, VII", "arts. 5º, XI", "artigo 24, V", "Art. 25, § 2º", "CE/SC, art. 85" no enunciado, nas alternativas, no comentário do professor, no fórum e na teoria. Passar o mouse mostra o texto num quadro sóbrio (só borda e texto); clicar fixa o quadro (Esc fecha).
   - Inciso e alínea vêm com o caput, o parágrafo ou o inciso que lhes dá sentido. Exemplo: "Art. 22. Compete privativamente à União legislar sobre: … VII - política de crédito…".

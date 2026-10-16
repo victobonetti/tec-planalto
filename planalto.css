@@ -6,7 +6,7 @@
 
 /* ---------- referências e quadro (sempre) ---------- */
 .tecf-ref { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help; }
-.tecf-ref:hover, .tecf-ref:focus-visible { background: #ffff99; outline: none; }
+.tecf-ref:focus-visible { outline: 1px dotted #000; outline-offset: 1px; }
 #tecf-pop {
   position: fixed; z-index: 100000; max-height: min(60vh, 440px); overflow: auto; box-sizing: border-box;
   background: #fff; color: #000; border: 1px solid #000; padding: 10px 14px 12px;
@@ -25,7 +25,6 @@
   border: 1px solid #c0c0c0; border-radius: 4px; background: #fff; color: #555;
   font: 700 15px/1 Arial, sans-serif; cursor: pointer; opacity: .55;
 }
-#tecf-botao:hover, #tecf-botao:focus-visible { opacity: 1; color: #000; }
 #tecf-botao[aria-pressed="true"] { color: #0000ff; border-color: transparent; }
 
 /* =================== modo Planalto =================== */
@@ -110,10 +109,9 @@ html.tecf .questao-enunciado-alternativa-opcao label {
   font-weight: 700 !important; white-space: nowrap; cursor: pointer;
 }
 html.tecf .questao-enunciado-alternativa-opcao label::after { content: ")" !important; }
-/* Sem as letras: cada alternativa é um parágrafo com recuo. A marcada fica sublinhada; o mouse, pontilhado. */
+/* Sem as letras: cada alternativa é um parágrafo com recuo. A marcada fica sublinhada. Nada reage ao mouse. */
 html.tecf .questao-enunciado-alternativa-campo { display: none !important; }
 html.tecf .questao-enunciado-alternativa-texto { text-indent: 38px; }
-html.tecf .questao-enunciado-alternativa:hover .questao-enunciado-alternativa-texto { text-decoration: underline dotted; text-underline-offset: 3px; }
 /* Só antes de responder; depois, valem o negrito e o itálico. */
 html.tecf .questao-enunciado-alternativas:not(:has(> li.correcao)) > li:has(.questao-alternativa-selecionada) .questao-enunciado-alternativa-texto { text-decoration: underline solid !important; text-underline-offset: 3px; }
 /* Sua marcação: letra sublinhada. */
@@ -154,7 +152,9 @@ html.tecf :is(.caderno-subtitulo, .container-abas, .link-compartilhar,
   .questao-complementos-comentario-coluna-esquerda, .questao-complementos-comentario-foto, .questao-complementos-comentario-conteudo-data,
   .discussao-titulo, .discussao-comentario-nota, .post-cabecalho-detalhes, .post-cabecalho-perfil-data, .post-cabecalho-perfil-bloqueio,
   .votos, .discussao-comentario-botoes, .discussao-comentario-oculto, .discussao-comentario-silenciado,
-  .questao-enunciado-concurso, .box-warning, .id-questao, .esconder-alternativa, .questao-navegacao-botao-ir-para-cinza, .questao-navegacao-botao-anterior-cinza, .questao-navegacao-botao-proxima-cinza) {
+  .questao-enunciado-concurso, .box-warning, .id-questao,
+  .questao-complementos-comentario-coluna-direita, .questao-complementos-comentario-avaliacao, .star-rating, .label-star-rating,
+  .tooltip, [role="tooltip"], [class*="tec-tooltip"], .esconder-alternativa, .questao-navegacao-botao-ir-para-cinza, .questao-navegacao-botao-anterior-cinza, .questao-navegacao-botao-proxima-cinza) {
   display: none !important;
 }
 /* Dos botões da questão fica só o fórum; o comentário do professor abre por "Ver resolução", depois de responder. */

@@ -51,9 +51,10 @@
     ligado = on;
     html.classList.toggle("tecf", on);
     aba(on);
+    if (document.body) semDicas();
     if (botao) {
       botao.setAttribute("aria-pressed", String(on));
-      botao.title = on ? "Sair do modo Planalto (Alt+P)" : "Modo Planalto (Alt+P)";
+      botao.setAttribute("aria-label", on ? "Sair do modo Planalto (Alt+P)" : "Modo Planalto (Alt+P)");
     }
   };
   const alternar = () => chrome.storage.local.get({ [CHAVE]: true }, (r) => chrome.storage.local.set({ [CHAVE]: !r[CHAVE] }));
@@ -200,7 +201,7 @@
   function rotular() {
     for (const el of document.querySelectorAll("button, a, [ng-click]")) {
       if (el.id === "tecf-botao" || el.closest("#tecf-pop, #tec-cookie-banner, .questao-enunciado-alternativas")) continue;
-      const ng = el.getAttribute("ng-click") || "", titulo = el.getAttribute("title") || el.getAttribute("uib-tooltip") || "";
+      const ng = el.getAttribute("ng-click") || "", titulo = el.getAttribute("title") || el.dataset.tecfTitulo || el.getAttribute("uib-tooltip") || "";
       if (OCULTAR.some((x) => ng.includes(x)) || /^Foto do usuário/i.test(titulo)) { el.setAttribute("data-tecf-ocultar", ""); continue; }
       const ind = el.querySelector(".questao-complementos-menu-indicador");
       const proprio = (el.textContent.replace(ind ? ind.textContent : "", "")).trim();
@@ -225,8 +226,15 @@
     }
   }
 
+  // Sem dicas ao passar o mouse: com o modo ligado, o title sai (guardado em data-tecf-titulo) e volta ao desligar.
+  function semDicas() {
+    if (ligado) for (const el of document.body.querySelectorAll("[title]")) { el.dataset.tecfTitulo = el.title; el.removeAttribute("title"); }
+    else for (const el of document.body.querySelectorAll("[data-tecf-titulo]")) { el.title = el.dataset.tecfTitulo; delete el.dataset.tecfTitulo; }
+  }
+
   function varrer() {
     if (!document.body) return;
+    semDicas();
     esconderIcones();
     rotular();
     document.querySelectorAll(ALVOS).forEach((el) => { esconderVazios(el); if (LEI) linkar(el); });
