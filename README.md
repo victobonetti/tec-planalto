@@ -4,13 +4,6 @@ Extensão do Chrome para quem resolve questões no [TEC Concursos](https://www.t
 
 E mais: todo artigo citado ("art. 22, VII", "CE/SC, art. 85") vira um link. Passe o mouse e leia o texto vigente na hora, sem abrir outra aba.
 
-- **Só a questão na tela:** somem menus, cronômetro, ícones, cores e botões. Ficam o enunciado, as alternativas e o essencial para navegar.
-- **A lei a um passe de mouse:** CF e Constituição de Santa Catarina, com o caput junto quando a referência é a um inciso ou alínea.
-- **Privada:** nada sai do seu navegador. A extensão não se conecta a servidor nenhum, não lê suas respostas e não responde nada por você.
-- **Liga e desliga em um toque:** Alt+P volta ao TEC de sempre quando você precisar dele.
-
-Feita no mesmo espírito do modo hiperfoco do [Portal do Aprendizado](https://github.com/victobonetti/portal-do-aprendizado).
-
 ## Instalação
 
 A extensão não está na Chrome Web Store. A instalação é manual, leva um minuto e só precisa ser feita uma vez.
