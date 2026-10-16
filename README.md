@@ -1,5 +1,7 @@
 # TEC Planalto
 
+<img width="1514" height="482" alt="image" src="https://github.com/user-attachments/assets/e36228db-4324-4901-83b1-aeffc66a25c7" />
+
 Extensão do Chrome para quem resolve questões no [TEC Concursos](https://www.tecconcursos.com.br) e quer ler cada questão como se estivesse lendo a lei: preto no branco, sem distrações, com a cara da [Constituição no site do Planalto](https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm).
 
 E mais: todo artigo citado ("art. 22, VII", "CE/SC, art. 85") vira um link. Passe o mouse e leia o texto vigente na hora, sem abrir outra aba.
@@ -24,23 +26,9 @@ Pronto. Abra qualquer questão no TEC Concursos: o modo Planalto já vem ligado.
 
 Entre no TEC, faça login e abra um caderno ou uma questão como sempre. A página muda de cara: fundo branco, letra Arial, texto justificado. Na aba do navegador, o título passa a ser "Constituição" e o ícone vira um §.
 
-A tela fica assim, de cima para baixo:
+A tela fica assim:
 
-```
-590 de 1281                                   ← posição no caderno
-UNIÃO: BENS E COMPETÊNCIAS                    ← assunto da questão
-(8) G %                                       ← fórum, gabarito comentado, estatísticas
 
-    Compete privativamente à União legislar sobre…   ← enunciado
-
-    direito civil, comercial, penal…                 ← alternativas, sem as letras
-    desapropriação…
-    …
-
-Resolver
-
-<< < > >>                                     ← navegação
-```
 
 ### 2. Responda
 
