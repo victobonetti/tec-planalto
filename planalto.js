@@ -128,8 +128,6 @@
     return { ctx, corpo };
   }
 
-  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
   function linkar(raiz) {
     const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT, {
       acceptNode: (n) => {
@@ -298,12 +296,15 @@
   function mostrar(el, fixar) {
     const r = JSON.parse(el.dataset.ref), tx = trecho(r.src, r.art, r.partes), q = quadro();
     const nome = (r.src === "ce" ? "CE/SC, art. " : "CF, art. ") + r.art + (r.partes.length ? ", " + r.partes.join(", ") : "");
-    const linha = (l, cls) => `<p class="tecf-l n${NIVEL(l)}${cls ? " " + cls : ""}">${esc(l)}</p>`;
-    q.innerHTML = `<div class="tecf-h"><b>${esc(nome)}</b><button class="tecf-x" aria-label="Fechar">×</button></div>` +
-      (tx
-        ? tx.ctx.map((l) => linha(l, "tecf-ctx")).join("") + (tx.ctx.length ? '<p class="tecf-l tecf-sep">…</p>' : "") + tx.corpo.map((l) => linha(l)).join("")
-        : '<p class="tecf-l">Trecho não encontrado neste artigo.</p>') +
-      "";
+    // Montado com o DOM, sem innerHTML (a revisão de extensões do Firefox exige).
+    const el_ = (tag, cls, texto) => { const e = document.createElement(tag); if (cls) e.className = cls; if (texto != null) e.textContent = texto; return e; };
+    const linha = (l, cls) => el_("p", `tecf-l n${NIVEL(l)}${cls ? " " + cls : ""}`, l);
+    const cab = el_("div", "tecf-h"), x = el_("button", "tecf-x", "×");
+    x.setAttribute("aria-label", "Fechar");
+    cab.append(el_("b", null, nome), x);
+    q.replaceChildren(cab, ...(tx
+      ? [...tx.ctx.map((l) => linha(l, "tecf-ctx")), ...(tx.ctx.length ? [el_("p", "tecf-l tecf-sep", "…")] : []), ...tx.corpo.map((l) => linha(l))]
+      : [el_("p", "tecf-l", "Trecho não encontrado neste artigo.")]));
     q.hidden = false; fixo = fixar ? el : null;
     const b = el.getBoundingClientRect(), w = Math.min(520, innerWidth - 24);
     q.style.width = w + "px";
